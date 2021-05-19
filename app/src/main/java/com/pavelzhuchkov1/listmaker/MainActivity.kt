@@ -54,8 +54,12 @@ MainFragment.MainFragmentInteractionListener{
 
         }
 
-        binding.fabButton.setOnClickListener{
+        binding.addListButton.setOnClickListener{
             showCreateListDialog()
+        }
+
+        binding.deleteAllListsButton?.setOnClickListener {
+            deleteAllLists()
         }
     }
 
@@ -120,10 +124,14 @@ MainFragment.MainFragmentInteractionListener{
                 replace(R.id.list_detail_fragment_container, ListDetailFragment::class.java, bundle, null)
             }
 
-            binding.fabButton.setOnClickListener {
+            binding.addListButton.setOnClickListener {
                 showCreateTaskDialog()
             }
         }
+    }
+
+    private fun deleteAllLists() {
+        viewModel.deleteAllLists()
     }
 
     override fun listItemTapped(list: TaskList) {
@@ -157,7 +165,7 @@ MainFragment.MainFragmentInteractionListener{
             }
         }
 
-        binding.fabButton.setOnClickListener {
+        binding.addListButton.setOnClickListener {
             showCreateListDialog()
         }
     }

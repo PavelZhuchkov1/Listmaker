@@ -34,6 +34,10 @@ class ListSelectionRecyclerViewAdapter(
         notifyItemInserted(lists.size-1)
     }
 
+    fun listsDeleted() {
+        notifyDataSetChanged()
+    }
+
     interface ListSelectionRecyclerViewClickListener {
         fun listItemClicked(list: TaskList)
     }

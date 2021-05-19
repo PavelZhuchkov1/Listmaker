@@ -1,6 +1,7 @@
 package com.pavelzhuchkov1.listmaker.ui.main
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.pavelzhuchkov1.listmaker.TaskList
 
@@ -12,6 +13,8 @@ class MainViewModel(private val sharedPreferences: SharedPreferences) : ViewMode
 
     //добавили функцию, кооторая будет показывать, добавлен ли лист. Инициализирован будет после.
     lateinit var onListAdded: (() -> Unit)
+
+    lateinit var onListsDeleted: (() -> Unit)
 
     //by lazy аналогичен lateinit, только для val.
     // lists будет вызван тогда, когда он понадобится. Если же мы не будем писать by lazy, то будет
@@ -56,5 +59,11 @@ class MainViewModel(private val sharedPreferences: SharedPreferences) : ViewMode
     fun addTask(task: String) {
         list.tasks.add(task)
         onTaskAdded.invoke()
+    }
+
+    fun deleteAllLists() {
+        lists.clear()
+        onListsDeleted.invoke()
+        Log.d("MyActivity", "I'm in deleteAllLists")
     }
 }

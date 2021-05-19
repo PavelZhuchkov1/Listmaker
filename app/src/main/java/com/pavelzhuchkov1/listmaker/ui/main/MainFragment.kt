@@ -44,6 +44,8 @@ ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
         binding.listsRecyclerview.adapter = recyclerViewAdapter
 
         viewModel.onListAdded = {recyclerViewAdapter.listsUpdated()}
+
+        viewModel.onListsDeleted = {recyclerViewAdapter.listsDeleted()}
     }
 
     override fun listItemClicked(list: TaskList) {
