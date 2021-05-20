@@ -18,11 +18,11 @@ import com.pavelzhuchkov1.listmaker.ui.detail.ui.detail.ListDetailFragment
 import com.pavelzhuchkov1.listmaker.ui.detail.ui.detail.ListDetailViewModel
 import com.pavelzhuchkov1.listmaker.ui.main.MainViewModel
 
-class ListDetailActivity : AppCompatActivity() {
+class ListDetailActivity : AppCompatActivity(),
+    ListDetailFragment.ListDetailFragmentInteractionListener {
 
     lateinit var binding: ListDetailActivityBinding
     lateinit var viewModel: MainViewModel
-    lateinit var fragment: ListDetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +34,10 @@ class ListDetailActivity : AppCompatActivity() {
             showCreateTaskDialog()
         }
 
+        binding.deleteAllTasksButton.setOnClickListener {
+            deleteAllTasks()
+        }
+
         viewModel = ViewModelProvider(this,
         MainViewModelFactory(PreferenceManager.getDefaultSharedPreferences(this)))
             .get(MainViewModel::class.java)
@@ -41,8 +45,10 @@ class ListDetailActivity : AppCompatActivity() {
         viewModel.list = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)!!
         title = viewModel.list.name
         if (savedInstanceState == null) {
+            val listDetailFragment = ListDetailFragment.newInstance()
+            listDetailFragment.listDetailFragmentInteractionListener = this
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, ListDetailFragment.newInstance())
+                    .replace(R.id.container, listDetailFragment)
                     .commitNow()
         }
     }
@@ -63,6 +69,18 @@ class ListDetailActivity : AppCompatActivity() {
             create()
             show()
         }
+    }
+
+    private fun deleteTask(task: String) {
+        viewModel.deleteTask(task)
+    }
+
+    private fun deleteAllTasks() {
+        viewModel.deleteAllTasks()
+    }
+
+    override fun deleteTaskCheckBoxTapped(task: String) {
+        deleteTask(task)
     }
 
     override fun onBackPressed() {

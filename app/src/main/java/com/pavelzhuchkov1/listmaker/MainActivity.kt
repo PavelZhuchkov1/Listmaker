@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
@@ -35,9 +36,10 @@ MainFragment.MainFragmentInteractionListener{
         val view = binding.root
 
         setContentView(view)
+
         if (savedInstanceState == null) {
             val mainFragment = MainFragment.newInstance()
-            mainFragment.clickListener = this
+            mainFragment.mainFragmentInteractionListener = this
 
             val fragmentContainerViewId: Int = if (binding.mainFragmentContainer == null) {
                 R.id.detail_container
@@ -58,7 +60,7 @@ MainFragment.MainFragmentInteractionListener{
             showCreateListDialog()
         }
 
-        binding.deleteAllListsButton?.setOnClickListener {
+        binding.deleteAllListsButton.setOnClickListener {
             deleteAllLists()
         }
     }
@@ -86,7 +88,9 @@ MainFragment.MainFragmentInteractionListener{
 
             val taskList = TaskList(listTitleEditText.text.toString())
             viewModel.saveList(taskList)
-            showListDetail(taskList)
+            //Мне не нравится, что сразу после того, как создаешь list, открывается list_detail,
+            //поэтому я за коментил строку ниже.
+            //showListDetail(taskList)
 
         } //не очень понятно что за _
 
@@ -130,12 +134,20 @@ MainFragment.MainFragmentInteractionListener{
         }
     }
 
+    private fun deleteList(list: TaskList) {
+        viewModel.deleteList(list)
+    }
+
     private fun deleteAllLists() {
         viewModel.deleteAllLists()
     }
 
     override fun listItemTapped(list: TaskList) {
         showListDetail(list)
+    }
+
+    override fun deleteListCheckBoxTapped(list: TaskList) {
+        deleteList(list)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

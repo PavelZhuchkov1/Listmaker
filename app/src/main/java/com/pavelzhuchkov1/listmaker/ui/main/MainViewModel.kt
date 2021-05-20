@@ -13,8 +13,10 @@ class MainViewModel(private val sharedPreferences: SharedPreferences) : ViewMode
 
     //добавили функцию, кооторая будет показывать, добавлен ли лист. Инициализирован будет после.
     lateinit var onListAdded: (() -> Unit)
-
+    lateinit var onListDeleted: (() -> Unit)
     lateinit var onListsDeleted: (() -> Unit)
+    lateinit var onTaskDeleted: (() -> Unit)
+    lateinit var onTasksDeleted: (() -> Unit)
 
     //by lazy аналогичен lateinit, только для val.
     // lists будет вызван тогда, когда он понадобится. Если же мы не будем писать by lazy, то будет
@@ -36,7 +38,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences) : ViewMode
             val list = TaskList(taskList.key, itemsHashSet)
             taskLists.add(list)
         }
-
+        Log.d("MyActivity", "$taskLists")
         return taskLists
     }
 
@@ -61,9 +63,27 @@ class MainViewModel(private val sharedPreferences: SharedPreferences) : ViewMode
         onTaskAdded.invoke()
     }
 
+    fun deleteList(list: TaskList) {
+        lists.remove(list)
+        sharedPreferences.edit().remove(list.name).apply()
+        onListDeleted.invoke()
+    }
+
     fun deleteAllLists() {
         lists.clear()
+        sharedPreferences.edit().clear().apply()
         onListsDeleted.invoke()
-        Log.d("MyActivity", "I'm in deleteAllLists")
+    }
+
+    fun deleteTask(task: String) {
+        list.tasks.remove(task)
+        sharedPreferences.edit().remove(task).apply()
+        onTaskDeleted.invoke()
+    }
+
+    fun deleteAllTasks() {
+        list.tasks.clear()
+        sharedPreferences.edit().clear().apply()
+        onTasksDeleted.invoke()
     }
 }

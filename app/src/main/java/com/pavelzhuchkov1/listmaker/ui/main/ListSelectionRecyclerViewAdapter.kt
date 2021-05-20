@@ -8,8 +8,11 @@ import com.pavelzhuchkov1.listmaker.databinding.ListSelectionViewHolderBinding
 
 class ListSelectionRecyclerViewAdapter(
         private val lists: MutableList<TaskList>,
-        val clickListener: ListSelectionRecyclerViewClickListener) :
+        val deleteListClickListener: DeleteListClickListener,
+        val showTasksClickListener: ListSelectionRecyclerViewClickListener) :
         RecyclerView.Adapter<ListSelectionViewHolder>() {
+
+    private var positionOfDeletedList: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListSelectionViewHolder {
 
@@ -21,8 +24,14 @@ class ListSelectionRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ListSelectionViewHolder, position: Int) {
         holder.binding.itemNumber.text = (position + 1).toString()
         holder.binding.itemString.text = lists[position].name
+        holder.binding.deleteListCheckBox.isChecked = false
         holder.itemView.setOnClickListener {
-            clickListener.listItemClicked(lists[position])
+            showTasksClickListener.listItemClicked(lists[position])
+        }
+
+        holder.binding.deleteListCheckBox.setOnClickListener {
+            positionOfDeletedList = position
+            deleteListClickListener.deleteListCheckBoxClicked(lists[position])
         }
     }
 
@@ -38,7 +47,16 @@ class ListSelectionRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
+    fun listDeleted() {
+        notifyItemRemoved(positionOfDeletedList)
+        notifyItemRangeChanged(positionOfDeletedList,lists.size)
+    }
+
     interface ListSelectionRecyclerViewClickListener {
         fun listItemClicked(list: TaskList)
+    }
+
+    interface DeleteListClickListener {
+        fun deleteListCheckBoxClicked(list: TaskList)
     }
 }
